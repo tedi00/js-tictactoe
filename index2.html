@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="style2.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script>
+        //random player start
+        let player = Math.round(Math.random());
+        //arrays containing player checked squares
+        var arrP1 = [];
+        var arrP2 = [];
+
+        //if array contains 3 numbers that add to 15, win
+        function checkWin(arr) {
+            for (let i = 0; i < arr.length; i++) {
+                arr[i] = +arr[i];
+            }
+            for (let i = 0; i < arr.length; i++)
+                for (let j = 0; j < arr.length; j++)
+                    for (let k = 0; k < arr.length; k++) {
+                        if (i != j && j != k && i != k) {
+                            if (arr[i] + arr[j] + arr[k] === 15) {
+                                if (arr === arrP1) {
+                                    $('#win1').html('X win');
+                                } else {
+                                    $('#win1').html('O win');
+                                }
+                                $('#win1').show();
+                            }
+                        }
+                    }
+        }
+
+        //disable clicking
+        function enabled(player, id) {
+            var arr;
+            var arr1 = arrP1;
+            var arr2 = arrP2;
+            //get length of longer array
+            if(arr1.length>arr2.length) arr = arr1;
+            else arr = arr2;
+            //check if squareID is full
+            var full = 0;
+            for (let i = 0; i < arr.length; i++) {
+                if (+id == arr1[i] || +id == arr2[i]) {
+                    full = 1;
+                }
+            }
+            //if game not ended or square not full, check square for player
+            if ($('#win1').is(":hidden") && full === 0) {
+                clickPlay(player, id);
+                changePlayer();
+            }
+            full = 0;
+        }
+
+        //change from 1 player to another
+        function changePlayer() {
+            player ? player=0 : player=1
+        }
+
+        //place symbol, add div id to array
+        function clickPlay(player, id) {
+            // alert("works");
+            var tab = document.getElementById(id);
+                if (player == 0) {
+                    tab.innerHTML = "<b>X</b>";
+                    tab.style.color = 'green';
+                    arrP1.push(id);
+                    //check if player won after clicking
+                    checkWin(arrP1);
+                } else {
+                    tab.innerHTML = "<b>O</b>";
+                    tab.style.color = 'red';
+                    arrP2.push(id);
+                    checkWin(arrP2);
+                }
+        }
+
+        //small change to initial btnNewGame function to accommodate 1-9 IDs
+        $(document).ready(() => {
+            $('#reset').click(() => {
+                //empty squares and hide player win
+                for (let i = 1; i < 10; i++)
+                    $('#' + i).html('');
+                $('#win1').hide();
+                //empty squareID arrays for each player
+                arrP1 = [];
+                arrP2 = [];
+                //new random player start
+                player = Math.round(Math.random());
+            })
+        })
+    </script>
+</head>
+<body>
+<button id="reset">New Game</button>
+<br>
+<table class="contain">
+    <tr>
+        <td>
+            <div id="8" onclick="enabled(player, '8')"></div>
+        </td>
+        <td>
+            <div id="3" onclick="enabled(player, '3')"></div>
+        </td>
+        <td>
+            <div id="4" onclick="enabled(player, '4')"></div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="1" onclick="enabled(player, '1')"></div>
+        </td>
+        <td>
+            <div id="5" onclick="enabled(player, '5')"></div>
+        </td>
+        <td>
+            <div id="9" onclick="enabled(player, '9')"></div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="6" onclick="enabled(player, '6')"></div>
+        </td>
+        <td>
+            <div id="7" onclick="enabled(player, '7')"></div>
+        </td>
+        <td>
+            <div id="2" onclick="enabled(player, '2')"></div>
+        </td>
+    </tr>
+</table>
+<br>
+<h2 id="win1" style="display: none">Win!</h2>
+</body>
+</html>
